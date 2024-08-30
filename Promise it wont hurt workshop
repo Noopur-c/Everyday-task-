@@ -1,0 +1,4 @@
+Promise it Wont Hurt workshop by stevekane-
+This workshop contains exercises on always async, an important rule, do some work, fetch json, 
+fulfill a promise, multiple promise, promise after promise, reject a promise, shortcuts, 
+throw an error, to reject or not to reject, values and promises, warm up
