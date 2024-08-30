@@ -1,0 +1,8 @@
+GitHub workshop- 
+This workshop includes the topics introduction to git commits, branching in git merging in git,
+rebase introduction, detaching the head, relative references, reversing changes in git,
+cherry pick inrtoduction, interactive rebase intro, grabbing just one commit, juggling
+commits, git tags, git describe, multiple parents, branch spagetti, clone introduction, remote
+branches, git fetching, git pulling, faking teamwork, git pushing, diverged history, locked main,
+push main, merging with remote, remote tracking, git push arguments, fetch arguments, pull
+arguments.
