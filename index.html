@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Data Analysis</title>
+
+    <!-- Include jQuery from CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include PapaParse CDN to handle CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Event listener for file input
+            $('#csvFileInput').on('change', function(event) {
+                var file = event.target.files[0]; // Get the file from input
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var csvData = e.target.result;
+
+                    // Parse CSV using PapaParse
+                    Papa.parse(csvData, {
+                        header: true,
+                        skipEmptyLines: true, // To skip any empty lines in the CSV
+                        complete: function(results) {
+                            var trains = results.data;
+                            console.log("Parsed Data: ", trains); // Debug: Check parsed data
+
+                            // Check if data exists
+                            if (trains.length === 0) {
+                                console.log("No data found in the CSV.");
+                                return;
+                            }
+
+                            // Find Maximum and Minimum stop
+                            var islnoValues = trains.map(train => parseInt(train.islno)).filter(Number.isFinite);
+                            var maxStop = Math.max(...islnoValues);
+                            var minStop = Math.min(...islnoValues);
+
+                            console.log("Maximum Stop: " + maxStop);
+                            console.log("Minimum Stop: " + minStop);
+
+                            // Get total number of trains (unique train numbers)
+                            var trainNumbers = [...new Set(trains.map(train => train["Train No."]))];
+                            var totalTrains = trainNumbers.length;
+
+                            console.log("Total Number of Trains: " + totalTrains);
+
+                            // Find longest and smallest distance covered by train
+                            var distances = trains.map(train => parseInt(train.Distance)).filter(Number.isFinite);
+                            var maxDistance = Math.max(...distances);
+                            var minDistance = Math.min(...distances);
+
+                            console.log("Longest Distance: " + maxDistance);
+                            console.log("Smallest Distance: " + minDistance);
+
+                            // Group trains by islno
+                            var groupedByIslno = {};
+                            trains.forEach(train => {
+                                var islno = train.islno;
+                                if (islno) {
+                                    if (!groupedByIslno[islno]) {
+                                        groupedByIslno[islno] = [];
+                                    }
+                                    groupedByIslno[islno].push(train);
+                                }
+                            });
+
+                            console.log("Grouped by islno: ", groupedByIslno);
+                        },
+                        error: function(err) {
+                            console.error("Error while parsing the CSV file: ", err);
+                        }
+                    });
+                };
+
+                // Read the file as text
+                reader.readAsText(file);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Train Data Analysis from CSV</h1>
+    <p>Select a CSV file to load train data:</p>
+    <!-- File input to upload CSV -->
+    <input type="file" id="csvFileInput" accept=".csv">
+
+    <p>Check the console for output.</p>
+</body>
+</html>
