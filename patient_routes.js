@@ -1,38 +1,23 @@
 const patientRoutes = express.Router();
-
-patientRoutes.get('/profile/:id', (req, res) => {
-    const patientId = req.params.id;
-    models.getPatientById(patientId, (err, results) => {
-        if (err) {
-            res.status(500).json({ error: 'Database error' });
-        } else if (results.length === 0) {
-            res.status(404).json({ error: 'Patient not found' });
-        } else {
-            res.json(results[0]);
-        }
-    });
+patientRoutes.get('/:id/profile', async (req, res) => {
+  const patient = await Patient.findById(req.params.id);
+  if (!patient) return res.status(404).send('Patient not found');
+  res.send(patient);
 });
 
-patientRoutes.get('/appointments/:id', (req, res) => {
-    const patientId = req.params.id;
-    models.getAppointmentsByPatientId(patientId, (err, results) => {
-        if (err) {
-            res.status(500).json({ error: 'Database error' });
-        } else {
-            res.json(results);
-        }
-    });
+patientRoutes.get('/:id/appointments', async (req, res) => {
+  const appointments = await Appointment.find({ patientId: req.params.id });
+  res.send(appointments);
 });
 
-patientRoutes.post('/take_appointment', (req, res) => {
-    const appointmentData = req.body;
-    models.createAppointment(appointmentData, (err, results) => {
-        if (err) {
-            res.status(500).json({ error: 'Database error' });
-        } else {
-            res.status(201).json({ message: 'Appointment request submitted successfully', id: results.insertId });
-        }
-    });
+patientRoutes.post('/:id/appointment', async (req, res) => {
+  const { doctorId, slot } = req.body;
+  const appointment = new Appointment({ patientId: req.params.id, doctorId, slot });
+  await appointment.save();
+  res.status(201).send(appointment);
 });
 
-app.use('/patient', patientRoutes);
+patientRoutes.get('/:id/bills', async (req, res) => {
+  const bills = await Bill.find({ patientId: req.params.id });
+  res.send(bills);
+});

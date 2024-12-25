@@ -1,14 +1,17 @@
 const adminRoutes = express.Router();
-
-adminRoutes.get('/stats', (req, res) => {
-    const query = `SELECT COUNT(*) AS total_patients FROM patients;`;
-    db.query(query, (err, results) => {
-        if (err) {
-            res.status(500).json({ error: 'Database error' });
-        } else {
-            res.json(results[0]);
-        }
-    });
+adminRoutes.get('/stats', async (req, res) => {
+  const patientsCount = await Patient.countDocuments();
+  const doctorsCount = await Doctor.countDocuments();
+  const totalAppointments = await Appointment.countDocuments();
+  res.send({ patientsCount, doctorsCount, totalAppointments });
 });
 
-app.use('/admin', adminRoutes);
+adminRoutes.get('/doctors', async (req, res) => {
+  const doctors = await Doctor.find();
+  res.send(doctors);
+});
+
+adminRoutes.get('/patients', async (req, res) => {
+  const patients = await Patient.find();
+  res.send(patients);
+});
